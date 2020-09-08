@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-# In[29]:
+# In[22]:
 
 
 import requests
@@ -9,14 +9,14 @@ import time
 from datetime import datetime
 
 
-# In[30]:
+# In[23]:
 
 
 url = 'http://127.0.0.1:5000/messages'
 after_id = -1
 
 
-# In[35]:
+# In[24]:
 
 
 def pretty_print(message):
@@ -33,7 +33,7 @@ def pretty_print(message):
     print()
 
 
-# In[36]:
+# In[25]:
 
 
 while True:
@@ -42,6 +42,5 @@ while True:
     for message in messages:
         pretty_print(message)
         after_id = message['id']
-    
-    time.sleep(3)
+    time.sleep(1)
 
