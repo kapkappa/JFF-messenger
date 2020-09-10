@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-# In[22]:
+# In[ ]:
 
 
 import requests
@@ -9,14 +9,14 @@ import time
 from datetime import datetime
 
 
-# In[23]:
+# In[ ]:
 
 
 url = 'http://127.0.0.1:5000/messages'
-after_id = -1
+after_timestamp = 0
 
 
-# In[24]:
+# In[ ]:
 
 
 def pretty_print(message):
@@ -33,14 +33,15 @@ def pretty_print(message):
     print()
 
 
-# In[25]:
+# In[ ]:
 
 
 while True:
-    response = requests.get(url, params={'after_id': after_id})
+    response = requests.get(url, params={'after_timestamp': after_timestamp})
     messages = response.json()['messages']
     for message in messages:
         pretty_print(message)
-        after_id = message['id']
-    time.sleep(1)
+        after_timestamp = message['timestamp']
+    if not messages:
+        time.sleep(1)
 

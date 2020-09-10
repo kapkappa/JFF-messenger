@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # coding: utf-8
 
-# In[74]:
+# In[5]:
 
 
 import flask
@@ -9,7 +9,7 @@ import time
 from datetime import datetime
 
 
-# In[77]:
+# In[6]:
 
 
 from flask import Flask
@@ -49,6 +49,7 @@ def status():
         'Time' : dn.strftime('%d.%m.%Y %H:%M:%S'),
         'Num of messages' : len(db),
         'Num of Users' : len(unique_names),
+        'users_count' : len(set(message['name'] for message in db)) #another realization
     }
     for (key, value) in st.items():
         info = info + '<pre>' + '{:<20}'.format(str(key)) + str(value) + '</pre>'
@@ -67,38 +68,44 @@ def send():
             'text' : BLACK_LIST,
             'timestamp' : time.time()
         })
-    else:
-        if data['text'].find(PASSWORD_ADD) != -1:
-            data['text'] = data['text'].replace(PASSWORD_ADD+' ','')
-            BLACK_LIST.append(data['text'])
+    if data['text'].find(PASSWORD_ADD) != -1:
+        data['text'] = data['text'].replace(PASSWORD_ADD+' ','')
+        BLACK_LIST.append(data['text'])
     
-        if data['text'].find(PASSWORD_REM) != -1:
-            data['text'] = data['text'].replace(PASSWORD_REM+' ','')
-            BLACK_LIST.remove(data['text'])
+    if data['text'].find(PASSWORD_REM) != -1:
+        data['text'] = data['text'].replace(PASSWORD_REM+' ','')
+        BLACK_LIST.remove(data['text'])
     
-        for word in BLACK_LIST:
-            data['text'] = data['text'].replace(word,'***')
+    for word in BLACK_LIST:
+        data['text'] = data['text'].replace(word,'*'*len(word))
     
-        db.append({
-            'id' : len(db),
-            'name' : data['name'],
-            'text' : data['text'],
-            'timestamp' : time.time()
-        })
+    db.append({
+        'id' : len(db),
+        'name' : data['name'],
+        'text' : data['text'],
+        'timestamp' : time.time()
+    })
+    
         
     return {'OK':True}
 
 @app.route('/messages')
 def messages():
-    if 'after_id' in request.args:
-        after_id = int(request.args['after_id']) + 1
+    if 'after_timestamp' in request.args:
+        after_timestamp = float(request.args['after_id'])
     else:
-        after_id = 0
-        return {'all messages' : db[after_id:]}
-    return {'messages': db[after_id : min(after_id + 50, len(db))]}
+        after_timestamp = 0.0
+        #after_id = 0
+        #return {'all messages' : db[after_id:]}
+    after_id=0
+    for message in db:
+        if message['timestamp'] > after_timestamp:
+            break
+        after_id +=1
+    return {'messages': db[after_id : after_id + 50]}
 
 
-# In[78]:
+# In[7]:
 
 
 app.run()
