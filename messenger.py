@@ -11,7 +11,7 @@ class Messenger(QtWidgets.QMainWindow, Ui_MainWindow):
         super().__init__()
         self.setupUi(self)
         self.url = url
-        self.after_timestamp = 0
+        self.after_timestamp = -1
         self.pushButton.pressed.connect(self.button_pressed)
         
         self.load_messages()
@@ -39,7 +39,7 @@ class Messenger(QtWidgets.QMainWindow, Ui_MainWindow):
         try:
             response = requests.get(
                 self.url + '/messages',
-                params={'after_timestamp': self.after_timestamp}
+                params={'after_timestamp' : self.after_timestamp}
             )
         except:
             pass
@@ -48,7 +48,7 @@ class Messenger(QtWidgets.QMainWindow, Ui_MainWindow):
             for message in messages:
                 self.pretty_print(message)
                 self.after_timestamp = message['timestamp']
-        return messages
+            return messages
         
     def load_messages(self):
         while self.update_messages():
